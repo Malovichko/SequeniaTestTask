@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="21dp">
+
+    <ImageView
+        android:id="@+id/iv_film_preview"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/gray"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/tv_holder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Изображение не найдено" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:background="@color/gray_dark_3"
+        >
+
+        <TextView
+            android:id="@+id/tv_film_title"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:maxLines="2"
+            android:textColor="@color/white"
+            android:ellipsize="end"
+            android:singleLine="false"
+            android:layout_marginBottom="4dp"
+            android:layout_marginHorizontal="6dp"
+            tools:text="текст" />
+    </RelativeLayout>
+
+
+</androidx.cardview.widget.CardView>
