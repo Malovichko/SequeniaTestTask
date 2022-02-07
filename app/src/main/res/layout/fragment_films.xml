@@ -25,7 +25,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        android:layout_marginBottom="60dp"
-        tools:listitem="@layout/item_film" />
+        android:paddingBottom="65dp"
+        tools:listitem="@layout/item_film"
+        android:clipToPadding="false"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,10 +3,11 @@ package com.example.sequeniatesttask.data
 import android.util.Log
 import com.example.sequeniatesttask.data.network.FilmsApiService
 import com.example.sequeniatesttask.data.network.model.SimpleListFilmsApiModel
+import com.example.sequeniatesttask.data.preferences.SharedPref
 import com.example.sequeniatesttask.domain.mappers.SimpleFilmsMapper
 import com.example.sequeniatesttask.domain.models.FilmModel
 import com.example.sequeniatesttask.domain.models.Films
-import com.example.sequeniatesttask.domain.models.Gener
+import com.example.sequeniatesttask.domain.models.Genre
 import com.example.sequeniatesttask.domain.models.Title
 import com.example.sequeniatesttask.domain.repository.Repository
 import retrofit2.Call
@@ -15,7 +16,7 @@ import retrofit2.Response
 import java.util.*
 import javax.inject.Inject
 
-class RepositoryImpl @Inject constructor(private val filmsApiService: FilmsApiService) :
+class RepositoryImpl @Inject constructor(private val filmsApiService: FilmsApiService, private val sharedPref: SharedPref) :
     Repository {
     override fun getFilms(getData: (list: List<Films>) -> Unit) {
         filmsApiService.getFilms().enqueue(object : Callback<SimpleListFilmsApiModel> {
@@ -32,15 +33,15 @@ class RepositoryImpl @Inject constructor(private val filmsApiService: FilmsApiSe
                             filmModel.localized_name.lowercase(myLocale)
                         })
                     )
-                    val allGenersList = mutableListOf<String>()
+                    val allGenresList = mutableListOf<String>()
                     filmModelList.forEach { filmModel ->
-                        allGenersList += filmModel.genres
+                        allGenresList += filmModel.genres
                     }
-                    val generList = SimpleFilmsMapper.mapStringToGener(allGenersList.toSet())
+                    val genreList = SimpleFilmsMapper.mapStringToGener(allGenresList.toSet())
 
                     val outList = mutableListOf<Films>()
                     outList.add(0, Title("Жанры"))
-                    outList += generList
+                    outList += genreList
                     outList.add(Title("Фильмы"))
                     outList += filmModelList
                     getData(outList)
@@ -51,6 +52,14 @@ class RepositoryImpl @Inject constructor(private val filmsApiService: FilmsApiSe
                 Log.d("RepositoryImpl", "onFailure")
             }
         })
+    }
+
+    override fun getGenre(): String? {
+        return sharedPref.getGenre()
+    }
+
+    override fun saveGenre(gener: Genre?) {
+       sharedPref.setGenre(gener?.genres)
     }
 
 }

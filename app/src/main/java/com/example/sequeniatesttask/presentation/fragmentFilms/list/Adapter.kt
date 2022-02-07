@@ -11,12 +11,15 @@ import com.example.sequeniatesttask.databinding.ItemGenresBinding
 import com.example.sequeniatesttask.databinding.ItemTitleBinding
 import com.example.sequeniatesttask.domain.models.FilmModel
 import com.example.sequeniatesttask.domain.models.Films
-import com.example.sequeniatesttask.domain.models.Gener
+import com.example.sequeniatesttask.domain.models.Genre
 import com.example.sequeniatesttask.domain.models.Title
-import okhttp3.internal.notifyAll
+import android.content.res.ColorStateList
+
 
 class Adapter constructor(
+
     private var films: List<Films>,
+    private val colorStateList: IntArray,
     private val curIt: (curIt: Films, pos: Int) -> Unit
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
@@ -29,7 +32,14 @@ class Adapter constructor(
 
     var filmsListFiltered: MutableList<Films> = mutableListOf()
 
-    var onItemClick: ((Films) -> Unit)? = null
+    init {
+        filmsListFiltered.addAll(films)
+    }
+
+    fun setUpFilmsList(list: List<Films>) {
+        filmsListFiltered.clear()
+        filmsListFiltered.addAll(list)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -53,18 +63,18 @@ class Adapter constructor(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (val currentItem = films[position]) {
+        when (val currentItem = filmsListFiltered[position]) {
             is FilmModel -> (holder as FilmViewHolder).bind(currentItem)
-            is Gener -> (holder as GenerViewHolder).bind(currentItem)
+            is Genre -> (holder as GenerViewHolder).bind(currentItem)
             is Title -> (holder as TitleViewHolder).bind(currentItem)
         }
     }
 
-    override fun getItemCount(): Int = films.size
+    override fun getItemCount(): Int = filmsListFiltered.size
 
     override fun getItemViewType(position: Int): Int {
-        return when (films[position]) {
-            is Gener -> RECTANGULAR_ITEM
+        return when (filmsListFiltered[position]) {
+            is Genre -> RECTANGULAR_ITEM
             is FilmModel -> SQUARE_ITEM
             is Title -> TITLE_ITEM
         }
@@ -78,7 +88,7 @@ class Adapter constructor(
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val gener = constraint?.toString() ?: ""
-                if (gener.isEmpty()) filmsListFiltered = films as MutableList<Films> else {
+                filmsListFiltered = if (gener.isEmpty()) films as MutableList<Films> else {
                     val filteredList = ArrayList<Films>()
                     films
                         .filter {
@@ -86,14 +96,12 @@ class Adapter constructor(
                                 is FilmModel -> {
                                     (it.genres.contains(constraint!!))
                                 }
-                                is Gener -> true
+                                is Genre -> true
                                 is Title -> true
                             }
                         }
                         .forEach { filteredList.add(it) }
-                    filmsListFiltered = filteredList
-
-                    Log.e("performFiltering: t1: ", filmsListFiltered.size.toString())
+                    filteredList
                 }
                 return FilterResults().apply { values = filmsListFiltered }
             }
@@ -104,48 +112,44 @@ class Adapter constructor(
                 else
                     results.values as ArrayList<Films>
                 notifyDataSetChanged()
-                Log.e("performFiltering: t2 ", "called" + filmsListFiltered.size)
             }
         }
-    }
-
-    fun updateList(list: List<Films>) {
-        filmsListFiltered.clear()
-        notifyDataSetChanged()
-        Log.d("TAG", "updateList")
-        filmsListFiltered.addAll(list)
-        Log.d("TAG", "updateList2")
-        notifyDataSetChanged()
-    }
-
-    fun filter(model: Gener): List<Films> {
-        val temp = mutableListOf<Films>()
-        filmsListFiltered.forEach {
-            when (it) {
-                is FilmModel -> {
-                    if (it.genres.contains(model.genres)) temp.add(it)
-                }
-                is Gener -> {
-                    temp.add(it)
-                }
-                is Title -> {
-                    temp.add(it)
-                }
-            }
-        }
-        return temp
     }
 
 
     inner class GenerViewHolder constructor(private val binding: ItemGenresBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(model: Gener) {
+
+        fun bind(model: Genre) {
+            Log.d("TAG", "bind: $model")
+            if (model.isChosen) {
+                itemView.backgroundTintList = ColorStateList.valueOf(colorStateList[0])
+
+            } else {
+                itemView.backgroundTintList = ColorStateList.valueOf(colorStateList[1])
+            }
+
             binding.btnGener.text = model.genres
             itemView.setOnClickListener {
+
+
+                filmsListFiltered.forEach {
+                    when (it) {
+                        is FilmModel -> {}
+                        is Genre -> {
+                            if (it.isChosen && it != model) {
+                                it.isChosen = false
+                            }
+                            else if (it == model) {
+                                model.isChosen = !model.isChosen
+                                it.isChosen = model.isChosen
+                            }
+                        }
+                        is Title -> {}
+                    }
+                }
                 curIt(model, adapterPosition)
-//                filter(model)
-                Log.d("TAG", "bind: ${model.genres}")
                 notifyDataSetChanged()
             }
         }

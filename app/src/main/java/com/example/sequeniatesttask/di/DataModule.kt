@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import com.example.sequeniatesttask.data.RepositoryImpl
 import com.example.sequeniatesttask.data.network.FilmsApiService
+import com.example.sequeniatesttask.data.preferences.SharedPref
 import com.example.sequeniatesttask.domain.repository.Repository
 import com.example.sequeniatesttask.presentation.fragmentFilms.FilmsPresenter
 import com.example.sequeniatesttask.presentation.fragmentFilms.FilmsView
+import com.example.sequeniatesttask.utils.PREF_FILE_NAME
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,8 +26,8 @@ import okhttp3.logging.HttpLoggingInterceptor
 @InstallIn(SingletonComponent::class)
 class DataModule {
     @Provides
-    fun provideRepository(filmsApiService: FilmsApiService): Repository {
-        return RepositoryImpl(filmsApiService)
+    fun provideRepository(filmsApiService: FilmsApiService, sharedPref: SharedPref): Repository {
+        return RepositoryImpl(filmsApiService, sharedPref)
     }
 
 
@@ -51,6 +53,11 @@ class DataModule {
     fun provideFilmsService(retrofit: Retrofit): FilmsApiService =
         retrofit.create(FilmsApiService::class.java)
 
+
+    @Provides
+    fun provideSharedPref(@ApplicationContext context: Context): SharedPref {
+        return SharedPref(context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE))
+    }
 }
 
 @Module

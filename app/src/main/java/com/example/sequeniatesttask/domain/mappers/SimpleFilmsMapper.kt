@@ -2,7 +2,7 @@ package com.example.sequeniatesttask.domain.mappers
 
 import com.example.sequeniatesttask.data.network.model.SimpleListFilmsApiModel
 import com.example.sequeniatesttask.domain.models.FilmModel
-import com.example.sequeniatesttask.domain.models.Gener
+import com.example.sequeniatesttask.domain.models.Genre
 
 object SimpleFilmsMapper {
     fun mapApiToDomain(source: SimpleListFilmsApiModel): List<FilmModel> {
@@ -23,11 +23,12 @@ object SimpleFilmsMapper {
         return filmsListModel
     }
 
-    fun mapStringToGener(source: Set<String>) : List<Gener> {
-        val genersList = mutableListOf<Gener>()
+    fun mapStringToGener(source: Set<String>) : List<Genre> {
+        val genersList = mutableListOf<Genre>()
         source.forEach { str ->
-            val gener = Gener(
-                str
+            val gener = Genre(
+                str,
+                false
             )
             genersList.add(gener)
         }

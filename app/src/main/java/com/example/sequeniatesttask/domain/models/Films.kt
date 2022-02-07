@@ -16,9 +16,11 @@ data class FilmModel(
     val year: Int
 ) : Films(), Parcelable
 
-data class Gener(
-    val genres: String
-) : Films()
+@Parcelize
+data class Genre(
+    val genres: String,
+    var isChosen: Boolean
+) : Films(), Parcelable
 
 data class Title(
     val title: String
