@@ -1,4 +1,4 @@
-package com.example.sequeniatesttask
+package com.example.sequeniatesttask.core
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

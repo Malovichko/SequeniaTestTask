@@ -23,7 +23,7 @@ class FilmsFragment : BaseFragment<FragmentFilmsBinding>(FragmentFilmsBinding::i
     @Inject
     lateinit var presenter: FilmsPresenter
     private lateinit var filmAdapter: Adapter
-    private lateinit var curGener: Genre
+    private var curGener: Genre? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +32,9 @@ class FilmsFragment : BaseFragment<FragmentFilmsBinding>(FragmentFilmsBinding::i
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelable(KEY_GENER, curGener)
+        if (curGener != null) {
+            outState.putParcelable(KEY_GENER, curGener)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -90,7 +92,7 @@ class FilmsFragment : BaseFragment<FragmentFilmsBinding>(FragmentFilmsBinding::i
             filmAdapter.setUpFilmsList(list)
             presenter.saveGenre(null)
         } else {
-            filmAdapter.filter.filter(curGener.genres)
+            filmAdapter.filter.filter(curGener!!.genres)
         }
         filmAdapter.notifyDataSetChanged()
     }

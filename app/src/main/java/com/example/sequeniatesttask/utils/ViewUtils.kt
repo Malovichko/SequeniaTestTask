@@ -10,9 +10,8 @@ fun ImageView.loadImage(
 ) {
     Glide.with(this)
         .load(path)
-        .error(R.drawable.ic_launcher_background)
+        .error(R.drawable.ic_baseline_no_photography_24)
         .into(this)
-
 }
 
 fun View.hide() {
